@@ -4,10 +4,12 @@
 
 | Nombre | Rol |
 |--------|-----|
-| Pedro Shiguihara | Product Owner (P.O) |
-| _Nombre Apellido_ | _Rol del miembro_ |
-| _Nombre Apellido_ | _Rol del miembro_ |
-| _Nombre Apellido_ | _Rol del miembro_ |
+| Pedro Shiguihara  | Product Owner (P.O)       |
+| Marcelo Condori   | Project Manager           |
+| Elena Agüero      | Business Analyst          |
+| Diana Ochoa       | Data Engineer             |
+| Elena Agüero      | Data Analyst              |
+| Jesus             | Prototype Developer       |
 
 ## GitHub Project
 
