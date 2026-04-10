@@ -9,7 +9,7 @@
 | Elena Agüero      | Business Analyst          |
 | Diana Ochoa       | Data Engineer             |
 | Elena Agüero      | Data Analyst              |
-| Jesus             | Prototype Developer       |
+| Jesus Choque            | Prototype Developer       |
 
 ## GitHub Project
 
