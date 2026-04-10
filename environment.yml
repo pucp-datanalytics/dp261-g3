@@ -1,0 +1,13 @@
+name: dp261-g3_Project
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pandas
+  - numpy
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - ipywidgets
+  - ipykernel
+  - jupyterlab
