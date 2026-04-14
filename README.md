@@ -7,7 +7,7 @@
 | Pedro Shiguihara  | Product Owner (P.O)       |
 | Marcelo Condori   | Project Manager           |
 | Elena Agüero      | Business Analyst          |
-| Diana Ochoa       | Data Engineer             |
+| Diana Ochoa       | Data Engineer, Data Cleaner|
 | Elena Agüero      | Data Analyst              |
 | Jesus Choque            | Prototype Developer       |
 
