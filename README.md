@@ -8,7 +8,7 @@
 | Marcelo Condori   | Project Manager           |
 | Elena Agüero      | Business Analyst          |
 | Diana Ochoa       | Data Engineer, Data Cleaner|
-| Elena Agüero      | Data Analyst              |
+| Elena Agüero      | Data Analyst , Class Balance           |
 | Jesus Choque            | Prototype Developer       |
 
 ## GitHub Project
