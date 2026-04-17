@@ -1,4 +1,4 @@
 [core]
-    remote = gdrive
-['remote "gdrive"']
-    url = gdrive://1RyAvqYuyw288HCK8ybrcupLiwqJHfxFC
+    remote = mydropbox
+['remote "mydropbox"']
+    url = dp261-g3_Project

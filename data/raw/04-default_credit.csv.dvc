@@ -1,5 +1,5 @@
 outs:
-- md5: 50b58a0155974d8d22a10691158c2694
-  size: 2897209
+- md5: b4bf11c60a1b7b3298a1bb20d7f5ae05
+  size: 2867208
   hash: md5
   path: 04-default_credit.csv
