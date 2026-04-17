@@ -1,4 +1,4 @@
 [core]
     remote = mydropbox
 ['remote "mydropbox"']
-    url = ../RUTA_CORRECTA/dp261-g3_Project
+    url = dp261-g3_Project
