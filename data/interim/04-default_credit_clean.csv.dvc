@@ -1,0 +1,5 @@
+outs:
+- md5: 9e29134ba3ef9d58c1d45f46761cdba6
+  size: 5479420
+  hash: md5
+  path: 04-default_credit_clean.csv
