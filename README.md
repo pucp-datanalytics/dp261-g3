@@ -4,12 +4,12 @@
 
 | Nombre | Rol |
 |--------|-----|
-| Pedro Shiguihara  | Product Owner (P.O)       |
-| Marcelo Condori   | Project Manager           |
-| Elena Agüero      | Business Analyst          |
-| Diana Ochoa       | Data Engineer, Data Cleaner|
-| Elena Agüero      | Data Analyst , Class Balance           |
-| Jesus Choque            | Prototype Developer       |
+| Pedro Shiguihara  | Product Owner (P.O)                         |
+| Marcelo Condori   | Project Manager, Feature Engineer           |
+| Elena Agüero      | Business Analyst                            |
+| Diana Ochoa       | Data Engineer, Data Cleaner                 |
+| Elena Agüero      | Data Analyst , Class Balance                |
+| Jesus Choque      | Prototype Developer                         |
 
 ## GitHub Project
 
