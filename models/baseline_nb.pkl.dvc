@@ -1,0 +1,5 @@
+outs:
+- md5: fa93ffe1b065bf180c8c390f090659c4
+  size: 2248
+  hash: md5
+  path: baseline_nb.pkl
