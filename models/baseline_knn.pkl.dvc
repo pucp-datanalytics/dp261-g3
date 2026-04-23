@@ -1,5 +1,0 @@
-outs:
-- md5: c05363b80f7f06714bd1a71457b7db67
-  size: 8448901
-  hash: md5
-  path: baseline_knn.pkl
