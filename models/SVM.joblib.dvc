@@ -1,0 +1,5 @@
+outs:
+- md5: 69ba344d7e04bcc4c37d8266725ff083
+  size: 3606790
+  hash: md5
+  path: SVM.joblib

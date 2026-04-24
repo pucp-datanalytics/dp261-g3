@@ -6,3 +6,9 @@
 /baseline_nb.pkl
 /baseline_rf.pkl
 /baseline_svm.pkl
+/LogisticRegression.joblib
+/DecisionTree.joblib
+/RandomForest.joblib
+/SVM.joblib
+/KNN.joblib
+/experiments_log.csv
