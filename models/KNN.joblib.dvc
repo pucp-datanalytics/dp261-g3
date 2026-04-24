@@ -1,0 +1,5 @@
+outs:
+- md5: 3062e7e244bd7ba91553ffe2ce484911
+  size: 7878687
+  hash: md5
+  path: KNN.joblib
