@@ -1,115 +1,106 @@
+from pathlib import Path
+
 import pandas as pd
-import joblib
-from datetime import datetime
 
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import cross_validate, StratifiedKFold
+from sklearn.pipeline import Pipeline
+
+from sklearn.svm import SVC
+from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier, AdaBoostClassifier
+
+from imblearn.pipeline import Pipeline as ImbPipeline
+from imblearn.over_sampling import RandomOverSampler
 
 
-# ============================================================
-# 1. Construcción del preprocesador
-# ============================================================
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
-def build_preprocessor(num_cols, cat_cols):
+DEFAULT_DATA_PATH = REPO_ROOT / "data" / "processed" / "04_default_credit_features.csv"
+
+# Hiperparámetros finales acordados tras tuning (PB-13 / Sprint 4); usados por Soft Voting.
+FINAL_ESTIMATOR_PARAMS = {
+    "svm": {"C": 0.515, "kernel": "rbf", "gamma": "scale"},
+    "gradient_boosting": {
+        "n_estimators": 69,
+        "learning_rate": 0.087,
+        "max_depth": 3,
+    },
+    "adaboost": {"n_estimators": 81, "learning_rate": 0.09},
+}
+
+
+def load_data(path=None):
+    """
+    Carga X, y desde el CSV de features.
+    Si ``path`` es None, usa ``DEFAULT_DATA_PATH`` (relativo a la raíz del repo).
+    """
+    csv_path = Path(path) if path is not None else DEFAULT_DATA_PATH
+    df = pd.read_csv(csv_path)
+    df = df.drop(columns=["ID"])
+
+    target = "default payment next month"
+    X = df.drop(columns=[target])
+    y = df[target]
+
+    return X, y
+
+
+def build_preprocessor(X):
+    cat_cols = X.select_dtypes(include=["object", "category", "string"]).columns.tolist()
+    num_cols = X.select_dtypes(include=["int64", "float64"]).columns.tolist()
+
     numeric_pipeline = Pipeline([
         ("imputer", SimpleImputer(strategy="median")),
-        ("scaler", StandardScaler())
+        ("scaler", StandardScaler()),
     ])
 
     categorical_pipeline = Pipeline([
         ("imputer", SimpleImputer(strategy="most_frequent")),
-        ("encoder", OneHotEncoder(handle_unknown="ignore"))
+        ("encoder", OneHotEncoder(handle_unknown="ignore")),
     ])
 
-    preproc = ColumnTransformer([
+    return ColumnTransformer([
         ("num", numeric_pipeline, num_cols),
-        ("cat", categorical_pipeline, cat_cols)
+        ("cat", categorical_pipeline, cat_cols),
     ])
 
-    return preproc
+
+def build_base_estimators(random_state=42):
+    """Retorna (svm, gradient_boosting, adaboost) con hiperparámetros finales."""
+    p = FINAL_ESTIMATOR_PARAMS
+    svm = SVC(**p["svm"], probability=True, random_state=random_state)
+    gb = GradientBoostingClassifier(**p["gradient_boosting"], random_state=random_state)
+    ada = AdaBoostClassifier(**p["adaboost"], random_state=random_state)
+    return svm, gb, ada
 
 
-# ============================================================
-# 2. Entrenamiento de un modelo
-# ============================================================
+def build_final_model(preproc, random_state=42):
+    """
+    Pipeline completo: preprocesamiento → RandomOverSampler → Soft Voting (SVM+GB+Ada).
+    """
+    svm, gb, ada = build_base_estimators(random_state=random_state)
 
-def train_model(model, preprocessor, X_train, y_train):
-    pipe = Pipeline([
-        ("preprocessing", preprocessor),
-        ("clf", model)
+    voting = VotingClassifier(
+        estimators=[
+            ("svm", svm),
+            ("gb", gb),
+            ("ada", ada),
+        ],
+        voting="soft",
+    )
+
+    return ImbPipeline([
+        ("preprocessing", preproc),
+        ("sampling", RandomOverSampler(random_state=42)),
+        ("model", voting),
     ])
-    pipe.fit(X_train, y_train)
-    return pipe
 
 
-# ============================================================
-# 3. Evaluación con Cross-Validation
-# ============================================================
-
-def evaluate_model(model, preprocessor, X, y, metricas=None, n_splits=5):
-    if metricas is None:
-        metricas = ["accuracy", "precision", "recall", "f1", "roc_auc"]
-
-    pipe = Pipeline([
-        ("preprocessing", preprocessor),
-        ("clf", model)
+def build_single_model_pipeline(preproc, estimator):
+    """Un solo clasificador base + mismo preprocesamiento y oversampling (artefactos `*_tuned.pkl`)."""
+    return ImbPipeline([
+        ("preprocessing", preproc),
+        ("sampling", RandomOverSampler(random_state=42)),
+        ("model", estimator),
     ])
-
-    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-
-    scores = cross_validate(pipe, X, y, cv=cv, scoring=metricas)
-
-    resultados = {m: scores[f"test_{m}"].mean() for m in metricas}
-    return resultados
-
-
-# ============================================================
-# 4. Guardar y cargar modelos
-# ============================================================
-
-def save_model(model, path):
-    joblib.dump(model, path)
-    print(f"Modelo guardado en: {path}")
-
-
-def load_model(path):
-    return joblib.load(path)
-
-
-# ============================================================
-# 5. Registro de experimentos (CSV)
-# ============================================================
-
-def log_experiment(model_name, model, metrics, path="../models/experiments_log.csv"):
-    fila = {
-        "modelo": model_name,
-        "parametros": str(model.get_params()),
-        "accuracy": metrics.get("accuracy"),
-        "precision": metrics.get("precision"),
-        "recall": metrics.get("recall"),
-        "f1": metrics.get("f1"),
-        "roc_auc": metrics.get("roc_auc"),
-        "fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    }
-
-    try:
-        df = pd.read_csv(path)
-        df = pd.concat([df, pd.DataFrame([fila])], ignore_index=True)
-    except FileNotFoundError:
-        df = pd.DataFrame([fila])
-
-    df.to_csv(path, index=False)
-    print(f"Experimento registrado en {path}")
-
-
-# ============================================================
-# 6. Validación de predicción
-# ============================================================
-
-def test_prediction(model_path, X_sample):
-    modelo = load_model(model_path)
-    pred = modelo.predict(X_sample)
-    return pred
