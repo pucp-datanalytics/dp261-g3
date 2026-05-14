@@ -12,3 +12,6 @@
 /SVM.joblib
 /KNN.joblib
 /experiments_log.csv
+/final_model.pkl
+/tuned/*.pkl
+!/tuned/.gitkeep

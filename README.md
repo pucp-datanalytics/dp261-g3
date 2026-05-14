@@ -135,6 +135,27 @@ Entregables:
 - Comparativa final de modelos con métricas detalladas
 - Modelo final seleccionado y serializado (pickle/joblib)
 
+#### Implementación en este repo (checklist Sprint 4)
+
+| # | Tarea | Ubicación |
+|---|--------|-----------|
+| 1 | Modelos + tuning reutilizables | `src/models.py` (pipelines, `FINAL_ESTIMATOR_PARAMS`), `src/tuning.py` (`tune_model`, `export_sprint4_artifacts`) |
+| 2 | Log de experimentos | Cada `tune_model` y cada export escribe en `models/experiments_log.csv` |
+| 3 | Persistencia joblib + DVC | Binarios ignorados por git en `models/`; versionar con DVC tras generarlos (ver comandos abajo) |
+| 4 | Validación de carga/predict | `scripts/validate_final_model.py` |
+| 5 | Resultados Sprint 4 en el log | Filas con `sprint=4` al ejecutar `scripts/sprint4_export.py` |
+| 6 | Flujo documentado | Esta tabla + notebooks `12_hyperparam_tuning.ipynb` → `13_ensembles.ipynb` → `14_final_validation.ipynb` / `15_business_value.ipynb` |
+
+**Flujo resumido:** datos versionados (DVC) → features `04_default_credit_features.csv` → baselines Sprint 3 (`09_*`, `12_hyperparam_tuning`) → hiperparámetros seleccionados (`FINAL_ESTIMATOR_PARAMS`) → ensamble Soft Voting en `models.build_final_model` → export reproducible con `python scripts/sprint4_export.py` → métricas holdout en test alineadas con `14_final_validation.ipynb`.
+
+**Comandos DVC sugeridos** (después de `dvc pull` de datos y de ejecutar el export):
+
+```bash
+python scripts/sprint4_export.py
+dvc add models/final_model.pkl models/tuned/svm_tuned.pkl models/tuned/gb_tuned.pkl models/tuned/ada_tuned.pkl models/experiments_log.csv
+git add models/*.dvc models/experiments_log.csv.dvc models/.gitignore
+```
+
 **Sprint 5 — Evaluation + Business Value** (entrega: 15/05/2026)
 
 Evaluar el Business Value y documentar resultados finales.
